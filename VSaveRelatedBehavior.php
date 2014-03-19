@@ -3,7 +3,7 @@
  * VSaveRelated
  * Vaquero`s Save Related
  * @author Ulisses Vaquero
- * @version 1.1
+ * @version 1.0
  * 
  */
 
@@ -20,7 +20,32 @@ class VSaveRelatedBehavior extends CActiveRecordBehavior
 	public $result = true;
 	
 	public $saved = false;
-
+	
+	
+	public function afterFind($event)
+	{
+		foreach($this->owner->tableSchema->columns as $column)
+		{
+			if($column->dbType == 'date' || $column->dbType == 'datetime')
+			{
+				$this->owner->{$column->name} = date('d/m/Y',strtotime(str_replace("-", "", $this->owner->{$column->name})));
+			}
+		}
+		return true;
+	}
+	
+	public function beforeSave($event)
+	{
+		foreach($this->owner->tableSchema->columns as $column)
+		{
+			if($column->dbType == 'date' || $column->dbType == 'datetime')
+			{
+				$this->owner->{$column->name} = date('Y-m-d',strtotime(str_replace(",", "", $this->owner->{$column->name})));
+			}
+		}
+		return true;		
+	}
+	
 	/*
 	 * 
 	 */
@@ -35,7 +60,7 @@ class VSaveRelatedBehavior extends CActiveRecordBehavior
 				{
 						$id = $this->vPGPKObj($valueVarRelationName,$activeRelation->className);
 						$this->owner->{$activeRelation->foreignKey} = $id;
-				}elseif(is_int($valueVarRelationName))
+				}elseif(is_int((int)$valueVarRelationName))
 				{
 					$id = $this->vByPk($valueVarRelationName,$activeRelation->className);
 					//Set in owner class, value of relation pk.
@@ -121,7 +146,7 @@ class VSaveRelatedBehavior extends CActiveRecordBehavior
 				$this->saved = true;
 			}else 
 			{
-				throw new CException("Object is not valid!");
+				throw new CException("Object ".get_class($this->owner)." is not valid!");
 			}
 		}
 		
@@ -189,7 +214,7 @@ class VSaveRelatedBehavior extends CActiveRecordBehavior
 				if(is_object($v))
 				{
 					$arrId[] = $this->vPGPKObj($v,$className);
-				}elseif(is_int($v))
+				}elseif(is_int((int)$v))
 				{
 					$arrId[] = $this->vByPk($v, $className);
 				}
@@ -199,7 +224,7 @@ class VSaveRelatedBehavior extends CActiveRecordBehavior
 			if(is_object($value))
 			{
 				$arrId[] = $this->vPGPKObj($value,$className);
-			}elseif(is_int($value))
+			}elseif(is_int((int)$value))
 			{
 				$arrId[] = $this->vByPk($value, $className);
 			}
@@ -223,10 +248,26 @@ class VSaveRelatedBehavior extends CActiveRecordBehavior
 		}
 		
 		/*
-		 * Resgato todas as relações BelongsTo
+		 * Belongs to relation first
 		 */
 		$owner = $this->owner;
-		foreach($this->owner->relations() as $varRelationName => $relation)
+		
+		$arrBelongsToRelation = array();
+		$arrRelation = array();
+		foreach ($this->owner->relations() as $key => $relation)
+		{
+			if(strtoupper($relation[0]) === self::$CBT)
+			{
+				$arrBelongsToRelation[$key] = $relation;
+			}else
+			{
+				$arrRelation[$key] = $relation;
+			}
+		}
+		
+		$arrRelation = array_merge($arrBelongsToRelation,$arrRelation);
+		
+		foreach($arrRelation as $varRelationName => $relation)
 		{
 			$activeRelation = $owner->getActiveRelation($varRelationName);
 			switch (strtoupper(get_class($activeRelation)))

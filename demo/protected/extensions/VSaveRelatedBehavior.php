@@ -20,7 +20,32 @@ class VSaveRelatedBehavior extends CActiveRecordBehavior
 	public $result = true;
 	
 	public $saved = false;
-
+	
+	
+	public function afterFind($event)
+	{
+		foreach($this->owner->tableSchema->columns as $column)
+		{
+			if($column->dbType == 'date' || $column->dbType == 'datetime')
+			{
+				$this->owner->{$column->name} = date('d/m/Y',strtotime(str_replace("-", "", $this->owner->{$column->name})));
+			}
+		}
+		return true;
+	}
+	
+	public function beforeSave($event)
+	{
+		foreach($this->owner->tableSchema->columns as $column)
+		{
+			if($column->dbType == 'date' || $column->dbType == 'datetime')
+			{
+				$this->owner->{$column->name} = date('Y-m-d',strtotime(str_replace(",", "", $this->owner->{$column->name})));
+			}
+		}
+		return true;		
+	}
+	
 	/*
 	 * 
 	 */

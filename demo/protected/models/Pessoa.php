@@ -107,10 +107,16 @@ class Pessoa extends CActiveRecord
 		return parent::model($className);
 	}
 	
+	
 	public function behaviors()
 	{
         return array('VSaveRelatedBehavior' => array(
-         			 'class' => 'application.extensions.VSaveRelatedBehavior')
+         			 'class' => 'application.extensions.VSaveRelatedBehavior'),
+        			'DateTimeI18NBehavior' => array(
+        			'class' => 'application.extensions.DateTimeI18NBehavior'
+        			)
      	);
 	}
+	
+	
 }
