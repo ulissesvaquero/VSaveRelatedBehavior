@@ -112,9 +112,6 @@ class Pessoa extends CActiveRecord
 	{
         return array('VSaveRelatedBehavior' => array(
          			 'class' => 'application.extensions.VSaveRelatedBehavior'),
-        			'DateTimeI18NBehavior' => array(
-        			'class' => 'application.extensions.DateTimeI18NBehavior'
-        			)
      	);
 	}
 	
