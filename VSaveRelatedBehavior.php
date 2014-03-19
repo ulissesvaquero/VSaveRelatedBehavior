@@ -28,7 +28,8 @@ class VSaveRelatedBehavior extends CActiveRecordBehavior
 		{
 			if($column->dbType == 'date' || $column->dbType == 'datetime')
 			{
-				$this->owner->{$column->name} = date('d/m/Y',strtotime(str_replace("-", "", $this->owner->{$column->name})));
+				$date = new DateTime($this->owner->{$column->name});
+				$this->owner->{$column->name} = $date->format('d/m/Y');
 			}
 		}
 		return true;
@@ -40,7 +41,8 @@ class VSaveRelatedBehavior extends CActiveRecordBehavior
 		{
 			if($column->dbType == 'date' || $column->dbType == 'datetime')
 			{
-				$this->owner->{$column->name} = date('Y-m-d',strtotime(str_replace(",", "", $this->owner->{$column->name})));
+				$date = new DateTime($this->owner->{$column->name});
+				$this->owner->{$column->name} = $date->format('Y-m-d'); 
 			}
 		}
 		return true;		
