@@ -87,7 +87,6 @@ class VSaveRelatedBehavior extends CActiveRecordBehavior
 						$arrId = $this->persistChildren($valueVarRelationName, $activeRelation->className);
 						//Clean data.
 						Yii::app()->db->createCommand()->delete($pieces[1],"$pieces[2] = {$this->owner->getPrimaryKey()}");
-						$r = Yii::app()->db->createCommand()->delete($pieces[1],"$pieces[2] = 117");
 						foreach($arrId as $id)
 						{
 							$this->result = Yii::app()->db->createCommand()->insert($pieces[1], array($pieces[2] => $this->owner->getPrimaryKey() , $pieces[3] => $id));
