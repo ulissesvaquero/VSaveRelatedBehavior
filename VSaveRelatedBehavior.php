@@ -21,8 +21,8 @@ class VSaveRelatedBehavior extends CActiveRecordBehavior
 	
 	public $saved = false;
 	
-	
-	public function afterFind($event)
+	//Será implementado em um novo behavior
+	/*public function afterFind($event)
 	{
 		foreach($this->owner->tableSchema->columns as $column)
 		{
@@ -46,7 +46,7 @@ class VSaveRelatedBehavior extends CActiveRecordBehavior
 			}
 		}
 		return true;		
-	}
+	}*/
 	
 	/*
 	 * 
